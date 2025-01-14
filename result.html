@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Résultats de la Recherche</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f4f8;
+            padding: 20px;
+            font-family: 'Arial', sans-serif;
+        }
+        h1, h2, h3, h4 {
+            margin-bottom: 20px;
+        }
+        .statistics {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        .badge-success {
+            background-color: #28a745;
+        }
+        .badge-danger {
+            background-color: red;
+        }
+        .btn-primary, .btn-success {
+            margin-top: 20px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .btn-primary:hover, .btn-success:hover {
+            transform: translateY(-2px);
+        }
+        .table th, .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+        .table th {
+            background-color: #007bff;
+            color: white;
+        }
+        .table-striped tbody tr:nth-of-type(odd) {
+            background-color: #f9f9f9;
+        }
+        .table-striped tbody tr:hover {
+            background-color: #e9ecef;
+        }
+        .skills-td {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.skills-td:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.skills-summary {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.skills-total {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+    margin-bottom: 10px;
+}
+
+.total-count {
+    font-size: 1.5rem;
+    color: #6610f2;
+    font-weight: bolder;
+}
+
+.skills-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.skill-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.skill-item:hover {
+    background-color: #e9ecef;
+    transform: translateX(5px);
+}
+
+.skill-item i {
+    color: #28a745;
+    margin-right: 10px;
+}
+
+.skill-item .count {
+    font-weight: bold;
+    color: #6c757d;
+}
+
+
+        .table-container {
+            overflow-x: auto;
+        }
+        /* Ajout d'un style pour le footer */
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            color: #555;
+        }
+        /* Nouveau style pour les mots clés */
+        .keywords {
+    margin-top: 15px; /* Espacement au-dessus des mots-clés */
+}
+
+.keyword-badge {
+    display: inline-block; /* Permet aux badges de s'aligner correctement */
+    background-color: #ffc107; /* Couleur de fond des badges */
+    color: #fff; /* Couleur du texte */
+    padding: 10px 20px; /* Ajustez le rembourrage pour agrandir le badge */
+    border-radius: 20px; /* Bords arrondis */
+    font-size: 1.2rem; /* Taille de la police (ajustez selon vos préférences) */
+    margin: 5px; /* Espacement entre les badges */
+    transition: transform 0.2s; /* Effet de transition */
+}
+
+.keyword-badge:hover {
+    transform: scale(1.1); /* Agrandissement au survol */
+}
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="text-center">
+            <h1 class="text-primary"><strong>Résultats des Candidatures</strong></h1>
+            <h2>Mots-clés recherchés :</h2>
+            <div class="keywords text-danger">
+                {% for term in search_terms %}
+                    <span class="keyword-badge">{{ term }}</span>
+                {% endfor %}
+            </div>
+            <p class="mt-3">Nous avons analysé les candidatures pour identifier les mots clés qui correspondent à vos besoins. Voici les résultats de notre recherche :</p>
+        </div>
+        
+        <div class="statistics mt-4">
+            <h3 class="text-primary"><strong>Statistiques :</strong></h3>
+            <h4>Nombre de CV importés : <strong class="text-primary">{{ total_cv_imported }}</strong></h4>
+            <h4>Nombre de candidats ayant les compétences recherchées : <strong class="text-primary">{{ validated_candidates }}</strong></h4>
+        </div>
+
+        <div class="table-container mt-4">
+            <table class="table table-bordered table-striped">
+                <thead>
+                    <tr>
+                        <th>Nom du Fichier</th>
+                        <th>Email</th>
+                        <th>Mots Clés</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for candidate in candidates %}
+                    <tr>
+                        <td>{{ candidate.name }}</td>
+                        <td>{{ candidate.email if candidate.email != 'Non trouvé' else 'Non trouvé' }}</td>
+                        <td class="skills-td">
+                            <div class="skills-summary">
+                                <h5 class="skills-total">Somme des mots-clés : <span class="total-count">{{ candidate.total_occurrences }}</span></h5>
+                            </div>
+                            <ul class="skills-list">
+                                {% for term, count in candidate.skills.items() %}
+                                    <li class="skill-item">
+                                        <i class="fas fa-check-circle"></i> {{ term }} <span class="count">({{ count }})</span>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </td>
+                        
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="/download/excel" class="btn btn-success btn-lg">
+                <i class="fas fa-file-excel"></i> Télécharger le tableau en Excel
+            </a>
+            <a href="/" class="btn btn-primary btn-lg">Revenir à la page d'accueil</a>
+        </div>
+        
+        <footer>
+            <p>&copy; 2024 Votre entreprise - Tous droits réservés</p>
+        </footer>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
